@@ -125,8 +125,7 @@
   .track-art .s6 { animation-duration: 2.8s; animation-delay: .9s; }
   @keyframes run { from { stroke-dashoffset: 90; } to { stroke-dashoffset: -1000; } }
 
-  /* Sports strip: two rows moving in opposite directions. JS drives them (speeds up with scrolling). */
-  .strip .set { padding: 14px 18px; }
+  /* Sports strip: JS drives it: speeds up and leans while scrolling, reverses on scroll up. */
   .strip.js .track { animation: none; will-change: transform; }
 
   /* Buttons: a colour sweeps across from the left on hover */
@@ -145,7 +144,7 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
     .strip .track { width: auto; flex-wrap: wrap; }
-    .strip .set[aria-hidden], .strip .t2 { display: none; }
+    .strip .set[aria-hidden] { display: none; }
     .ecg-base { stroke-dashoffset: 0; }
     .ecg-blip, .track-art .streak { display: none; }
   }
@@ -193,7 +192,6 @@
 <!-- SPORTS STRIP -->
 <section class="strip" aria-label="Sports" style="overflow: hidden; background: var(--accent); color: #0F1215;">
 <div class="track t1"><div class="set"><span>Football</span><span class="dot" aria-hidden="true">●</span><span>AFL</span><span class="dot" aria-hidden="true">●</span><span>Soccer</span><span class="dot" aria-hidden="true">●</span><span>Badminton</span><span class="dot" aria-hidden="true">●</span><span>Strength Training</span><span class="dot" aria-hidden="true">●</span></div><div class="set" aria-hidden="true"><span>Football</span><span class="dot" aria-hidden="true">●</span><span>AFL</span><span class="dot" aria-hidden="true">●</span><span>Soccer</span><span class="dot" aria-hidden="true">●</span><span>Badminton</span><span class="dot" aria-hidden="true">●</span><span>Strength Training</span><span class="dot" aria-hidden="true">●</span></div></div>
-<div class="track t2" aria-hidden="true"><div class="set" aria-hidden="true"><span>Football</span><span class="dot" aria-hidden="true">●</span><span>AFL</span><span class="dot" aria-hidden="true">●</span><span>Soccer</span><span class="dot" aria-hidden="true">●</span><span>Badminton</span><span class="dot" aria-hidden="true">●</span><span>Strength Training</span><span class="dot" aria-hidden="true">●</span></div><div class="set" aria-hidden="true"><span>Football</span><span class="dot" aria-hidden="true">●</span><span>AFL</span><span class="dot" aria-hidden="true">●</span><span>Soccer</span><span class="dot" aria-hidden="true">●</span><span>Badminton</span><span class="dot" aria-hidden="true">●</span><span>Strength Training</span><span class="dot" aria-hidden="true">●</span></div></div>
 </section>
 
 <!-- ABOUT -->
