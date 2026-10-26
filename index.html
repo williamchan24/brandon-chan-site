@@ -56,7 +56,6 @@
 
   /* Marquee */
   .strip .track { display: flex; width: max-content; animation: marquee 28s linear infinite; }
-  .strip:hover .track { animation-play-state: paused; }
   .strip .set { display: flex; align-items: center; gap: 36px; padding: 22px 18px; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 28px; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; }
   .strip .dot { font-size: 10px; opacity: .55; }
   @keyframes marquee { to { transform: translateX(-50%); } }
@@ -126,10 +125,8 @@
   .track-art .s6 { animation-duration: 2.8s; animation-delay: .9s; }
   @keyframes run { from { stroke-dashoffset: 90; } to { stroke-dashoffset: -1000; } }
 
-  /* Sports strip: two rows, the second outlined and moving the other way. JS drives them (speeds up with scrolling). */
+  /* Sports strip: two rows moving in opposite directions. JS drives them (speeds up with scrolling). */
   .strip .set { padding: 14px 18px; }
-  .strip .t2 .set { color: transparent; -webkit-text-stroke: 1.5px #0F1215; }
-  .strip .t2 .dot { color: #0F1215; -webkit-text-stroke: 0; }
   .strip.js .track { animation: none; will-change: transform; }
 
   /* Buttons: a colour sweeps across from the left on hover */
@@ -375,9 +372,7 @@
   var rowsEls = strip ? [].slice.call(strip.querySelectorAll('.track')) : [];
   if (rowsEls.length) {
     strip.classList.add('js');
-    var pos = 0, vel = 0, dir = 1, prevY = window.scrollY, paused = false, onScreen = true;
-    strip.addEventListener('mouseenter', function () { paused = true; });
-    strip.addEventListener('mouseleave', function () { paused = false; });
+    var pos = 0, vel = 0, dir = 1, prevY = window.scrollY, onScreen = true;
     new IntersectionObserver(function (e) { onScreen = e[0].isIntersecting; }).observe(strip);
     (function tick() {
       var y = window.scrollY, dy = y - prevY;
@@ -385,7 +380,7 @@
       vel += (dy - vel) * 0.12; // smoothed scroll speed (px per frame)
       if (Math.abs(dy) > 0.5) dir = dy > 0 ? 1 : -1;
       if (onScreen) {
-        var speed = paused ? 0 : 0.55 + Math.min(Math.abs(vel) * 0.5, 14);
+        var speed = 0.55 + Math.min(Math.abs(vel) * 0.5, 14);
         var w = rowsEls[0].firstElementChild.offsetWidth; // one set; the row holds two, so it loops seamlessly
         pos = ((pos + speed * dir) % w + w) % w;
         var skew = Math.max(-8, Math.min(8, -vel * 0.35));
