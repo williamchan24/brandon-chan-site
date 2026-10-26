@@ -128,6 +128,10 @@
   /* Sports strip: JS drives it: speeds up and leans while scrolling, reverses on scroll up. */
   .strip.js .track { animation: none; will-change: transform; }
 
+  /* About: focus-area chips */
+  .focus-chip { border: 1px solid var(--accent); color: #F2F1EE; padding: 10px 18px; border-radius: 999px; font-size: 15px; font-weight: 600; transition: background-color .2s ease, color .2s ease; }
+  .focus-chip:hover { background: var(--accent); color: #0F1215; }
+
   /* Buttons: a colour sweeps across from the left on hover */
   .sweep { position: relative; overflow: hidden; isolation: isolate; transition: color .3s ease, border-color .3s ease; }
   .sweep::before { content: ""; position: absolute; inset: 0; z-index: -1; transform: scaleX(0); transform-origin: left; transition: transform .4s cubic-bezier(.2,.8,.2,1); }
@@ -200,8 +204,17 @@
 <span style="font-size: 13px; font-weight: 700; letter-spacing: 2px; color: var(--accent);">ABOUT</span>
 </div>
 <div style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 24px;">
-<p class="rv" style="margin: 0; font-size: clamp(24px, 2.6vw, 34px); line-height: 1.35; font-weight: 500;">Brandon is an ESSA Accredited Exercise Scientist with experience in strength and conditioning, sport and athletic training and rehabilitation.</p>
-<p style="margin: 0; font-size: 18px; line-height: 1.65; color: #C9CDD2; max-width: 760px;">He works across multiple sports such as football, Australian Football League (AFL), badminton and general strength training, bringing an evidence-based approach to build athletes who can stay injury-free and perform at the highest level.</p>
+<p class="rv" style="margin: 0; font-size: clamp(24px, 2.6vw, 34px); line-height: 1.35; font-weight: 500;">Brandon is an ESSA Accredited Exercise Scientist in his third year of a Bachelor of Exercise and Sport Science at Swinburne University, with a real passion for <span style="color: var(--accent);">injury management and prevention</span> in sporting populations.</p>
+<p style="margin: 0; font-size: 18px; line-height: 1.65; color: #C9CDD2; max-width: 760px;">He brings a strong understanding of movement analysis, motor control and learning, athlete development and exercise physiology, with hands-on experience in strength and conditioning, sport and athletic training and rehabilitation across football, Australian Football League (AFL), soccer, badminton and general strength training.</p>
+<p style="margin: 0; font-size: 18px; line-height: 1.65; color: #C9CDD2; max-width: 760px;">Badminton is where his passion runs deepest. He uses evidence-based training and the principles of sport science to help players perform at their best while reducing their risk of injury.</p>
+<div class="rv focus" style="display: flex; flex-direction: column; gap: 14px; padding-top: 8px;">
+<span style="font-size: 13px; font-weight: 700; letter-spacing: 1.5px; color: #9AA1A9;">AREAS OF FOCUS</span>
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px;">
+<li class="focus-chip">Athlete management</li>
+<li class="focus-chip">Performance tracking</li>
+<li class="focus-chip">Injury prevention</li>
+</ul>
+</div>
 </div>
 </section>
 
@@ -333,36 +346,39 @@
   window.addEventListener('resize', onScroll);
   onScroll();
   if (reduce || !('IntersectionObserver' in window)) return;
-  var els = [].slice.call(document.querySelectorAll('.rv'));
-  // Only animate things that start below the fold; everything above stays as-is.
+  // Scroll reveals replay every time: an element animates in when it comes on screen,
+  // resets once it's fully off screen, and animates in again the next time you scroll to it
+  // (scrolling down or back up). Things already on screen at load don't animate the first time.
   var vh = window.innerHeight;
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) {
-      if (!e.isIntersecting) return;
-      var el = e.target, sibs = [].slice.call(el.parentNode.children).filter(function (c) { return c.classList.contains('rv'); });
-      el.style.animationDelay = (Math.max(0, sibs.indexOf(el)) % 6) * 80 + 'ms';
-      el.classList.add('in');
-      io.unobserve(el);
+  function watch(nodes, onIn, onOut) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { (e.isIntersecting ? onIn : onOut)(e.target); });
     });
-  }, { rootMargin: '0px 0px 8% 0px' });
-  els.forEach(function (el) { if (el.getBoundingClientRect().top > vh) io.observe(el); });
+    nodes.forEach(function (el) { io.observe(el); });
+  }
+
+  // Sections and cards fade up (cards in the same group arrive one after another)
+  var els = [].slice.call(document.querySelectorAll('.rv'));
+  els.forEach(function (el) { if (el.getBoundingClientRect().top < vh) el.dataset.skip = '1'; });
+  watch(els, function (el) {
+    if (el.dataset.skip) return;
+    var sibs = [].slice.call(el.parentNode.children).filter(function (c) { return c.classList.contains('rv'); });
+    el.style.animationDelay = (Math.max(0, sibs.indexOf(el)) % 6) * 80 + 'ms';
+    el.classList.add('in');
+  }, function (el) {
+    delete el.dataset.skip;
+    el.classList.remove('in'); // off screen: ready to play again
+  });
 
   // Big headings: wrap each in a mask and slide it up when it scrolls into view
   var heads = [].slice.call(document.querySelectorAll('.rh'));
-  var hio = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) {
-      if (!e.isIntersecting) return;
-      e.target.classList.add('in');
-      hio.unobserve(e.target);
-    });
-  }, { rootMargin: '0px 0px -10% 0px' });
   heads.forEach(function (el) {
-    if (el.getBoundingClientRect().top <= vh) return; // already on screen at load: leave it alone
     el.innerHTML = '<span class="rh-m"><span class="rh-i">' + el.innerHTML + '</span></span>';
     if (el.closest('.rv')) el.querySelector('.rh-i').style.transitionDelay = '.15s'; // let its card arrive first
+    if (el.getBoundingClientRect().top < vh) el.classList.add('in'); // on screen at load: show it straight away
     el.classList.add('armed');
-    hio.observe(el);
   });
+  watch(heads, function (el) { el.classList.add('in'); }, function (el) { el.classList.remove('in'); });
 
   // Sports strip: two rows drift in opposite directions, speed up while you scroll,
   // lean with the scroll speed, and flip direction when you scroll back up.
