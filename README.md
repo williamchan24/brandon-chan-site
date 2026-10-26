@@ -26,12 +26,18 @@ I built this for my brother Brandon so he'd have somewhere to send people who wa
 - **Accessible:** everything that moves switches off for visitors who prefer reduced motion, and keyboard users get a visible focus outline
 
 ## Editing
-Everything lives in `index.html`: the styles are in the `<style>` block at the top, and the script is at the bottom. No build step and no dependencies apart from Google Fonts (Barlow Condensed and Instrument Sans).
+The site is three files, with no build step and no dependencies apart from Google Fonts (Barlow Condensed and Instrument Sans):
+
+| File | What's in it |
+|---|---|
+| `index.html` | The page content and layout |
+| `styles.css` | Colours, animations and hover effects |
+| `script.js` | Scroll progress, scroll reveals, the smart header, the sports strip and the service-card glow |
 
 | To change | Where |
 |---|---|
-| Accent colour | `--accent` near the top of the `<style>` block (currently `#FF6B2C`) |
-| Hero photo | Replace the `<svg class="track-art">` inside `.hero-photo` with `<img src="brandon.jpg" alt="Brandon Chan coaching">` and add the image file next to `index.html` |
+| Accent colour | `--accent` at the top of `styles.css` (currently `#FF6B2C`) |
+| Hero photo | Replace the `<svg class="track-art">` inside `.hero-photo` in `index.html` with `<img src="brandon.jpg" alt="Brandon Chan coaching">` and add the image file next to `index.html` |
 | Contact details | The `mailto:`, `tel:` and Instagram links in the **Contact** section; they're still placeholders |
 | Sports in the strip | The `<div class="set">` inside `.strip`; keep both copies identical so the loop stays seamless |
 | Services and experience | Edit the text in the **Services** and **Experience** sections |
