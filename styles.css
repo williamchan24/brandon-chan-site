@@ -1,5 +1,9 @@
 /* Change the accent colour here */
-:root { --accent: #FF6B2C; }
+:root { --accent: #FF6B2C;
+  /* Motion tokens: one strong ease-out for things arriving/responding, one ease-in-out for things moving on screen */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
 html { scroll-behavior: smooth; }
 body { margin: 0; background: #0F1215; -webkit-font-smoothing: antialiased; }
 *, *::before, *::after { box-sizing: border-box; }
@@ -30,13 +34,13 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 
 /* Hero entrance */
 .hero-h1 .ln { display: block; overflow: hidden; padding-bottom: .04em; }
-.hero-h1 .ln > span { display: inline-block; animation: lineUp .9s cubic-bezier(.16,.84,.24,1) both; }
+.hero-h1 .ln > span { display: inline-block; animation: lineUp .9s var(--ease-out) both; }
 .hero-h1 .ln:nth-child(2) > span { animation-delay: .12s; }
 .hero-h1 .ln.sub { margin-top: 10px; color: var(--accent); font-size: .6em; line-height: .95; }
 .hero-h1 .ln.sub > span { display: inline; animation: none; }
-.hero-h1 .ln.sub { animation: fadeUp .7s .35s ease-out both; }
+.hero-h1 .ln.sub { animation: fadeUp .7s .35s var(--ease-out) both; }
 @keyframes lineUp { from { transform: translateY(105%); } to { transform: none; } }
-.fi { animation: fadeUp .8s ease-out both; }
+.fi { animation: fadeUp .8s var(--ease-out) both; }
 .d1 { animation-delay: 0s; } .d3 { animation-delay: .25s; } .d4 { animation-delay: .45s; } .d5 { animation-delay: .55s; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 
@@ -47,11 +51,11 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 @keyframes marquee { to { transform: translateX(-50%); } }
 
 /* Scroll reveal: plays as an element enters; visible by default */
-.rv.in { animation: fadeUp .7s cubic-bezier(.2,.8,.2,1) both; }
+.rv.in { animation: fadeUp .7s var(--ease-out) both; }
 
 /* Hovers */
-.arr { display: inline-block; transition: transform .2s ease; }
-a:hover .arr { transform: translateX(5px); }
+.arr { display: inline-block; transition: transform 200ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) { a:hover .arr { transform: translateX(5px); } }
 a { transition: opacity .15s ease, transform .2s ease, background-color .2s ease; }
 .svc { transition: background-color .25s ease; }
 .svc:hover { background: #151A1F !important; }
@@ -61,23 +65,25 @@ a { transition: opacity .15s ease, transform .2s ease, background-color .2s ease
 .svc::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity .3s ease;
   background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgba(255,107,44,.24), transparent 60%); }
 .svc:hover::before { opacity: 1; }
-.svc > span:first-child { display: inline-block; transition: transform .3s cubic-bezier(.2,.8,.2,1); }
-.svc:hover > span:first-child { transform: translateX(6px); }
+.svc > span:first-child { display: inline-block; transition: transform 250ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) { .svc:hover > span:first-child { transform: translateX(6px); } }
 
 /* Big section headings slide up out of a mask, like the hero */
 .rh-m { display: block; overflow: hidden; padding-bottom: .06em; margin-bottom: -.06em; }
-.rh-i { display: block; transition: transform .9s cubic-bezier(.16,.84,.24,1); }
+.rh-i { display: block; transition: transform .9s var(--ease-out); }
 .rh.armed:not(.in) .rh-i { transform: translateY(105%); }
 
 /* Header: hides while scrolling down, comes back on scroll up; the current section is highlighted */
-.site-header { transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+.site-header { transition: transform 250ms var(--ease-out); }
 .site-header.hide { transform: translateY(-110%); }
 .site-header nav a.navlink { position: relative; transition: color .2s ease; }
-.site-header nav a.navlink::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 2px; border-radius: 2px; background: var(--accent); transform: scaleX(0); transition: transform .3s ease; }
 .site-header nav a.navlink.active { color: #F2F1EE !important; }
-.site-header nav a.navlink.active::after { transform: scaleX(1); }
+/* One underline slides to the active link; script.js sets its position and width (as a scale of a 100px bar) */
+.main-nav { position: relative; }
+.nav-bar { position: absolute; left: 0; top: 0; width: 100px; height: 2px; border-radius: 2px; background: var(--accent); transform-origin: left; opacity: 0; pointer-events: none; transition: transform 300ms var(--ease-in-out), opacity 200ms var(--ease-out); }
+.nav-bar.on { opacity: 1; }
 .svc-t { background: linear-gradient(var(--accent), var(--accent)) 0 100% / 0% 2px no-repeat; padding-bottom: 4px; transition: background-size .35s ease; align-self: flex-start; }
-.svc:hover .svc-t { background-size: 100% 2px; }
+@media (hover: hover) and (pointer: fine) { .svc:hover .svc-t { background-size: 100% 2px; } }
 
 /* Experience timeline */
 .xp { position: relative; padding-left: 32px; }
@@ -93,7 +99,11 @@ a { transition: opacity .15s ease, transform .2s ease, background-color .2s ease
 .ecg { position: absolute; left: 24px; right: 24px; bottom: 22px; width: calc(100% - 48px); height: 64px; z-index: 0; pointer-events: none; overflow: visible; }
 .ecg path { fill: none; stroke: var(--accent); stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
 .ecg-base { stroke-width: 2; opacity: .3; stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: ecgDraw 2.2s .6s cubic-bezier(.4,0,.2,1) forwards; }
-.ecg-blip { stroke-width: 3; stroke-dasharray: 70 2000; stroke-dashoffset: 70; filter: drop-shadow(0 0 6px rgba(255,107,44,.9)); animation: ecgBlip 3.4s linear 2.8s infinite both; }
+.ecg-blip { stroke-width: 3; stroke-dasharray: 70 2000; stroke-dashoffset: 70; animation: ecgBlip 3.4s linear 2.8s infinite both; }
+/* the blip glow is a wider, faint stroke underneath instead of a drop-shadow filter (repainted every frame) */
+.ecg-glow { stroke-width: 9; opacity: .25; stroke-dasharray: 70 2000; stroke-dashoffset: 70; animation: ecgBlip 3.4s linear 2.8s infinite both; }
+/* the hero loops pause while the hero is off screen */
+.hero.offscreen .ecg-blip, .hero.offscreen .ecg-glow, .hero.offscreen .track-art .streak { animation-play-state: paused; }
 @keyframes ecgDraw { to { stroke-dashoffset: 0; } }
 @keyframes ecgBlip { from { stroke-dashoffset: 70; } to { stroke-dashoffset: -1000; } }
 
@@ -119,22 +129,25 @@ a { transition: opacity .15s ease, transform .2s ease, background-color .2s ease
 .focus-chip:hover { background: var(--accent); color: #0F1215; }
 
 /* Buttons: a colour sweeps across from the left on hover */
-.sweep { position: relative; overflow: hidden; isolation: isolate; transition: color .3s ease, border-color .3s ease; }
-.sweep::before { content: ""; position: absolute; inset: 0; z-index: -1; transform: scaleX(0); transform-origin: left; transition: transform .4s cubic-bezier(.2,.8,.2,1); }
+.sweep { position: relative; overflow: hidden; isolation: isolate; transition: color 250ms var(--ease-out), border-color 250ms var(--ease-out), transform 160ms var(--ease-out); }
+.sweep::before { content: ""; position: absolute; inset: 0; z-index: -1; transform: scaleX(0); transform-origin: left; transition: transform 250ms var(--ease-out); }
 .sweep:hover { opacity: 1; }
-.sweep:hover::before { transform: scaleX(1); }
+.sweep:active { transform: scale(0.97); }
+@media (hover: hover) and (pointer: fine) { .sweep:hover::before { transform: scaleX(1); } }
 .sw-primary::before { background: #F2F1EE; }
 .sw-ghost::before { background: var(--accent); }
-.sw-ghost:hover { color: #0F1215 !important; border-color: var(--accent) !important; }
+@media (hover: hover) and (pointer: fine) { .sw-ghost:hover { color: #0F1215 !important; border-color: var(--accent) !important; } }
 .sw-dark::before { background: #F2F1EE; }
-.sw-dark:hover { color: #0F1215 !important; }
+@media (hover: hover) and (pointer: fine) { .sw-dark:hover { color: #0F1215 !important; } }
 .sw-outline::before { background: #0F1215; }
-.sw-outline:hover { color: #F2F1EE !important; }
+@media (hover: hover) and (pointer: fine) { .sw-outline:hover { color: #F2F1EE !important; } }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; transition: none !important; }
+  /* No movement, but keep quick fades and colour changes as feedback */
+  *, *::before, *::after { animation: none !important; transition-property: opacity, color, background-color, border-color !important; transition-duration: 150ms !important; }
+  .sweep:active { transform: none; }
   .strip .track { width: auto; flex-wrap: wrap; }
   .strip .set[aria-hidden] { display: none; }
   .ecg-base { stroke-dashoffset: 0; }
-  .ecg-blip, .track-art .streak { display: none; }
+  .ecg-blip, .ecg-glow, .track-art .streak { display: none; }
 }
